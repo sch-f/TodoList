@@ -1,28 +1,124 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div id="root">
+      <div class="todo-container">
+        <div class="todo-wrap">
+          <UserHeader :addTodo="addTodo"></UserHeader>
+          <UserList :todos="todos" :checkedTodo="checkedTodo" :deletTodo="deletTodo"></UserList>
+          <UserFooter :todos="todos"  :checkedAll="checkedAll" :cleartodo="cleartodo"></UserFooter>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import UserFooter from './components/UserFooter.vue';
+import UserHeader from './components/UserHeader.vue';
+import UserList from './components/UserList.vue';
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    UserFooter, UserHeader, UserList
+  },
+  data() {
+    return {//从浏览器本地存储拿到todos            那个为真footer的length使用那个,
+      todos:JSON.parse(localStorage.getItem('todos')) || []/*  [    测试用'数据'  //把todos传给List
+        { id: '001', titel: '吃饭', done: true },
+        { id: '002', titel: '睡觉', done: false },
+        { id: '003', titel: '游戏', done: true }
+      ] */
+    }
+  },
+  methods: {
+    //添加一个todo
+    //接收到Header传过来的todo参数
+    addTodo(x) {
+      console.log('我是app,接受到:', x);
+      this.todos.unshift(x)   //把收到的数据添加在todos的前面
+    },
+    //勾选或者取消一个todo,
+    //把此事件传给list,在传给item
+    //由item给此函数传参
+    checkedTodo(id) {
+      this.todos.forEach((todo) => {  //todo是正在当前遍历的元素
+        if (todo.id == id) todo.done = !todo.done
+      })
+    },
+    //删除一个todo
+    deletTodo(id) {
+      this.todos = this.todos.filter((todo) => {  //filter过滤掉不想要的 不改变数组 将新的数组赋值回去
+        return todo.id !== id      //不等于id返回true
+      })
+    },
+    //全选、全不选
+    checkedAll(done){
+      this.todos.forEach((todo)=>{
+        todo.done = done
+      })
+    },
+    //删除已完成
+    cleartodo(){
+      this.todos = this.todos.filter((todo)=>{ //通过过滤器把未选择的todo过滤出去 剩下的在赋值会todos
+        return !todo.done == true
+      })
+    }
+  },
+  watch:{
+    todos:{
+      deep:true,
+      handler(value){
+      localStorage.setItem('todos',JSON.stringify(value))
+    }
+    }
+
+    
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+<style scoped>
+/*base*/
+body {
+  background: #fff;
+}
+
+.btn {
+  display: inline-block;
+  padding: 4px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  line-height: 20px;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  vertical-align: middle;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.btn-danger {
+  color: #fff;
+  background-color: #da4f49;
+  border: 1px solid #bd362f;
+}
+
+.btn-danger:hover {
+  color: #fff;
+  background-color: #bd362f;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.todo-container {
+  width: 600px;
+  margin: 0 auto;
+}
+
+.todo-container .todo-wrap {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 </style>
