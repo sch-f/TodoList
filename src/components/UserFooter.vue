@@ -31,11 +31,13 @@ export default {
     methods: {
         //实现全选
         ckAll(e) {
-            this.checkedAll(e.target.checked)//e.target.checked获取当前checked的状态  App传过来的checkedAll函数
+            //使用自定义事件
+            this.$emit('checkedAll',e.target.checked)//e.target.checked获取当前checked的状态  App传过来的checkedAll函数
         },
-        //删除已完成的任务  cleartodo（）是App传过来的  点击一次就运行一次cleartodo（）函数
+        //删除已完成的任务  点击一次就运行一次cleartodo（）函数
         clearAll(){
-            this.cleartodo()
+            //使用自定义事件
+            this.$emit('cleartodo')
         }
     }
 }

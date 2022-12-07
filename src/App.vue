@@ -3,9 +3,11 @@
     <div id="root">
       <div class="todo-container">
         <div class="todo-wrap">
-          <UserHeader :addTodo="addTodo"></UserHeader>
+          <!-- 改为自定义事件 -->
+          <UserHeader @addTodo="addTodo"></UserHeader>
           <UserList :todos="todos" :checkedTodo="checkedTodo" :deletTodo="deletTodo"></UserList>
-          <UserFooter :todos="todos"  :checkedAll="checkedAll" :cleartodo="cleartodo"></UserFooter>
+          <!-- 传送数据,不能使用自定义事件 -->
+          <UserFooter :todos="todos"  @checkedAll="checkedAll" @cleartodo="cleartodo"></UserFooter>
         </div>
       </div>
     </div>

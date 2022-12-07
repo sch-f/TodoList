@@ -8,7 +8,7 @@
 import {nanoid} from 'nanoid'
 export default {
     name: 'UserHeader',
-    props:['addTodo'],
+    //props:['addTodo'], //改为自定义事件后,就不用接收数据
     methods:{
         add(event){
             if(!event.target.value.trim())return   //校验内容为空,直接返回出去
@@ -17,7 +17,8 @@ export default {
                 id:nanoid(),titel:event.target.value,done:false
             }
             //rective函数是App组件传过来的,在vc里面,把todoObj作为函数的参数
-            this.addTodo(todoObj)
+            //this.addTodo(todoObj)  //由于改为了自定义事件就不这样调用
+            this.$emit('addTodo',todoObj)//参数1:需要触发的事件,参数二.触发事件的参数
             event.target.value=''//输入完成后清空input
         },
         
