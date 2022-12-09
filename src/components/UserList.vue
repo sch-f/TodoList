@@ -4,8 +4,7 @@
         <UserItem v-for="todoObj in todos" 
             :key="todoObj.id" 
             :yigshi='todoObj' 
-            :checkedTodo="checkedTodo"
-            :deletTodo="deletTodo"></UserItem><!-- 把checkedTodo传给item -->
+            ></UserItem><!-- 把checkedTodo传给item -->
     </ul>
 </template>
 
@@ -14,7 +13,7 @@ import UserItem from './UserItem.vue'
 export default {
     name: 'UserList', //组件名
     components: { UserItem }, //注册UserItem组件
-    props: ['todos', 'checkedTodo','deletTodo']//接受App组件传过来的todos对象,传过来的checkedTodo,deletTodo函数 
+    props: ['todos' ]//接受App组件传过来的todos对象
 }
 </script>
 

@@ -75,6 +75,15 @@ export default {
     }
 
     
+  },
+  //全局事件总线
+  mounted(){  //生命周期钩子,初始化页面完成时
+    this.$bus.$on('checkedTodo',this.checkedTodo)  //给事件总线$bus绑定事件
+    this.$bus.$on('deletTodo',this.deletTodo)  //第一个参数是绑定函数的名字,第二个参数是绑定的函数
+  },
+  beforeDestroy(){//生命周期钩子,在当前组件即将销毁时
+    this.$bus.$off('checkedTodo')//当组件销毁时解绑当前组件所用到的事件
+    this.$bus.$off('deletTodo')
   }
 }
 </script>

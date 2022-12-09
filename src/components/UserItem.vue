@@ -12,18 +12,17 @@
 
 export default {
     name: 'UserItem',
-    props: ['yigshi', 'checkedTodo','deletTodo'],  //收到List传过来的yigeshi对象,checkedTodo函数,deletTodo函数
+    props: ['yigshi'],  //收到List传过来的yigeshi对象,checkedTodo函数,deletTodo函数
     methods: {
         //id来自yigshi.id
         handleCheck(id) {
             //通知App组件将对应的事件取反
-            //checkedTodo函数在vc里面,值是item中的id参数
-            this.checkedTodo(id)
+            this.$bus.$emit('checkedTodo',id)  //通过事件总线,得到checkedTodo函数,给他传参
         },
         //删除todo
         delTodo(id){
             if(!confirm('确定删除吗'))return
-            this.deletTodo(id)
+            this.$bus.$emit('deletTodo',id)
             
         }
     }
