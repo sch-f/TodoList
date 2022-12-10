@@ -5,7 +5,7 @@
         <div class="todo-wrap">
           <!-- 改为自定义事件 -->
           <UserHeader @addTodo="addTodo"></UserHeader>
-          <UserList :todos="todos" :checkedTodo="checkedTodo" :deletTodo="deletTodo"></UserList>
+          <UserList :todos="todos" ></UserList>
           <!-- 传送数据,不能使用自定义事件 -->
           <UserFooter :todos="todos"  @checkedAll="checkedAll" @cleartodo="cleartodo"></UserFooter>
         </div>
@@ -18,13 +18,14 @@
 import UserFooter from './components/UserFooter.vue';
 import UserHeader from './components/UserHeader.vue';
 import UserList from './components/UserList.vue';
+import pubsub from 'pubsub-js'   //引入消息订阅的库,所有框架都可以使用 npm i pubsub-js@1.6.0
 export default {
   name: 'App',
   components: {
     UserFooter, UserHeader, UserList
   },
   data() {
-    return {//从浏览器本地存储拿到todos            那个为真footer的length使用那个,
+    return {//从浏览器本地存储拿到todos            [] 那个为真footer的length使用那个,
       todos:JSON.parse(localStorage.getItem('todos')) || []/*  [    测试用'数据'  //把todos传给List
         { id: '001', titel: '吃饭', done: true },
         { id: '002', titel: '睡觉', done: false },
@@ -42,13 +43,13 @@ export default {
     //勾选或者取消一个todo,
     //把此事件传给list,在传给item
     //由item给此函数传参
-    checkedTodo(id) {
+    checkedTodo(_,id) { //第一个参数为订阅消息的名字(使用下划线占位),第二个参数为订阅的消息传过来的数据
       this.todos.forEach((todo) => {  //todo是正在当前遍历的元素
         if (todo.id == id) todo.done = !todo.done
       })
     },
     //删除一个todo
-    deletTodo(id) {
+    deletTodo(_,id) { 
       this.todos = this.todos.filter((todo) => {  //filter过滤掉不想要的 不改变数组 将新的数组赋值回去
         return todo.id !== id      //不等于id返回true
       })
@@ -76,14 +77,14 @@ export default {
 
     
   },
-  //全局事件总线
+  //消息订阅
   mounted(){  //生命周期钩子,初始化页面完成时
-    this.$bus.$on('checkedTodo',this.checkedTodo)  //给事件总线$bus绑定事件
-    this.$bus.$on('deletTodo',this.deletTodo)  //第一个参数是绑定函数的名字,第二个参数是绑定的函数
+    this.pubCheckedTodoId = pubsub.subscribe('checkedTodo',this.checkedTodo)  //pubsub.subscribe订阅消息,参数1:订阅消息名字,参数2:回调函数
+    this.pubDelTodoId = pubsub.subscribe('deletTodo',this.deletTodo) //取消订阅需要:订阅消息的id,把id放在vc里,就可以读取到订阅消息的id
   },
-  beforeDestroy(){//生命周期钩子,在当前组件即将销毁时
-    this.$bus.$off('checkedTodo')//当组件销毁时解绑当前组件所用到的事件
-    this.$bus.$off('deletTodo')
+  beforeDestroy(){  //在将要销毁时组件时,清除订阅的消息
+    pubsub.unsubscribe(this.pubCheckedTodoId)
+    pubsub.unsubscribe(this.pubDelTodoId)
   }
 }
 </script>

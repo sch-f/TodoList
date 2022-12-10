@@ -9,7 +9,7 @@
 </template>
 
 <script scoped>
-
+import pubsub from 'pubsub-js' 
 export default {
     name: 'UserItem',
     props: ['yigshi'],  //收到List传过来的yigeshi对象,checkedTodo函数,deletTodo函数
@@ -17,12 +17,12 @@ export default {
         //id来自yigshi.id
         handleCheck(id) {
             //通知App组件将对应的事件取反
-            this.$bus.$emit('checkedTodo',id)  //通过事件总线,得到checkedTodo函数,给他传参
+            pubsub.publish('checkedTodo',id)    //发布消息,参数1:发布消息的名字,参数2:携带的数据
         },
         //删除todo
         delTodo(id){
             if(!confirm('确定删除吗'))return
-            this.$bus.$emit('deletTodo',id)
+            pubsub.publish('deletTodo',id)
             
         }
     }
