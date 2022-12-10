@@ -2,10 +2,13 @@
     <li>
         <label>
             <input type="checkbox" :checked='yigshi.done' @click="handleCheck(yigshi.id)" />
-            <span>{{ yigshi.titel }}</span>
+            <span v-show="!yigshi.isEdit">{{ yigshi.titel }}</span>   <!-- 通过v-show来控制时span显示还是input显示 -->
+            <input v-show="yigshi.isEdit" type="text" :value="yigshi.titel" @blur="handleBlur(yigshi,$event)"> <!-- 失去焦点时 -->
         </label>
         <button class="btn btn-danger" @click="delTodo(yigshi.id)">删除</button>
-        <button class="btn btn-danger" style="margin-right: 10px;" >编辑</button>
+        <button class="btn btn-danger" style="margin-right: 10px;" 
+        @click = 'handleEdit(yigshi)'
+        v-show="!yigshi.isEdit">编辑</button>  <!-- input框显示时,按钮不显示 -->
     </li>
 </template>
 
@@ -25,6 +28,24 @@ export default {
             if(!confirm('确定删除吗'))return
             pubsub.publish('deletTodo',id)
             
+        },   
+             //编辑todo item 
+        handleEdit(yigshi){
+            //如果yigshi里面有isEdit则直接修改其值,反之给他添加一个isEdit
+            if (yigshi.hasOwnProperty('isEdit')) { //hasOwnProperty判断一个对象是否拥有这个属性
+                yigshi.isEdit = true
+            }else{
+                this.$set(yigshi,'isEdit',true) //给item添加isEdit属性
+            }
+            
+        },
+        //通过失去焦点,来修改item里面的内容
+        handleBlur(yigshi,e){    //e时事件对象 $event
+            yigshi.isEdit = false;
+            console.log('updateTodo',yigshi.id,e.target.value);
+            //校验input框是否有内容
+            if(!e.target.value.trim())return alert('输入不能为空')
+            this.$bus.$emit('updateTodo',yigshi.id,e.target.value) //获取input框中输入的内容,传递给App组件
         }
     }
 }
