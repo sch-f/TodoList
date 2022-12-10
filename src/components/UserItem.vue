@@ -5,6 +5,7 @@
             <span>{{ yigshi.titel }}</span>
         </label>
         <button class="btn btn-danger" @click="delTodo(yigshi.id)">删除</button>
+        <button class="btn btn-danger" style="margin-right: 10px;" >编辑</button>
     </li>
 </template>
 
